@@ -187,7 +187,7 @@ func (m *Manager) Restart() (nMgr *Manager, err error) {
 }
 
 // Start starts the Manager.
-func (m *Manager) Start() (err error) {
+func (m *Manager) Start(DisableCache ...bool) (err error) {
 	m.Lock()
 	defer m.Unlock()
 
@@ -208,8 +208,15 @@ func (m *Manager) Start() (err error) {
 		for _, handler := range m.handlers {
 			shard.AddHandler(handler)
 		}
+		// Placeholder for DisableCache
+		var IsCacheDisabled = false
+		for _, arg := range DisableCache {
+			if arg {
+				IsCacheDisabled = true
+			}
+		}
 		// Connect shard.
-		err = shard.Init(m.token, id, m.ShardCount, m.Intent)
+		err = shard.Init(m.token, id, m.ShardCount, m.Intent, IsCacheDisabled)
 		if err != nil {
 			return
 		}

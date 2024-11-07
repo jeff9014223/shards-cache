@@ -104,7 +104,7 @@ func (s *Shard) GuildCount() int {
 
 // Init initializes a shard with a bot token, its Shard ID, the total
 // amount of shards, and a Discord intent.
-func (s *Shard) Init(token string, ID, ShardCount int, intent discordgo.Intent) (err error) {
+func (s *Shard) Init(token string, ID, ShardCount int, intent discordgo.Intent, DisableCache bool) (err error) {
 	s.Lock()
 	defer s.Unlock()
 
@@ -116,6 +116,11 @@ func (s *Shard) Init(token string, ID, ShardCount int, intent discordgo.Intent) 
 	s.Session, err = discordgo.New(token)
 	if err != nil {
 		return
+	}
+
+	// Disable internal caching if specified
+	if DisableCache {
+		s.Session.StateEnabled = false
 	}
 
 	// Shard the session.
